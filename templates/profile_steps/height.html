@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Height — FITNESS</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --primary:#4A00E0;
+  --primary-2:#7B1FA2;
+  --glass: rgba(255,255,255,0.78);
+  --muted:#6b6b6b;
+  --card-w:460px;
+  --gap:18px;
+}
+
+html,body{height:100%;margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+body{
+  background: linear-gradient(180deg,#FBF8FF 0%, #F0F4FF 100%);
+  display:flex;align-items:center;justify-content:center;padding:32px;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+body::before{
+  content:"";
+  position:fixed;inset:-30%;
+  background:
+    radial-gradient(circle at 8% 20%, rgba(74,0,224,0.12), transparent 12%),
+    radial-gradient(circle at 92% 80%, rgba(106,27,154,0.06), transparent 12%);
+  filter: blur(48px) saturate(120%); z-index:0;
+  animation: bgFloat 12s ease-in-out infinite;
+}
+@keyframes bgFloat{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+
+.page { width:100%; max-width:var(--card-w); margin:0 auto; z-index:1; }
+
+.card {
+  background: linear-gradient(180deg,var(--glass), rgba(255,255,255,0.62));
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  border-radius:18px;
+  padding:28px 28px 32px;
+  box-shadow: 0 22px 60px rgba(76,0,150,0.09);
+  border:1px solid rgba(255,255,255,0.75);
+  position:relative;
+  overflow:visible;
+  transform-origin:center;
+  animation: cardIn .6s cubic-bezier(.2,.9,.25,1) both;
+}
+@keyframes cardIn { from{opacity:0; transform:translateY(18px) scale(.995)} 60%{transform:translateY(-6px) scale(1.002)} to{opacity:1; transform:translateY(0) scale(1)} }
+
+.logo { display:flex; gap:10px; align-items:center; justify-content:center; margin-bottom:8px; animation: logoFloat 4s ease-in-out infinite; }
+.logo .fa-dumbbell{ color:var(--primary); font-size:1.2rem; transform:translateY(2px); }
+.brand { font-weight:900; color:var(--primary); font-size:1.45rem; letter-spacing:1.6px; text-transform:uppercase; display:inline-block; transform:translateZ(0); }
+@keyframes logoFloat {0%{transform:translateY(0)}50%{transform:translateY(-3px)}100%{transform:translateY(0)}}
+
+h1.title { margin:6px 0 8px; text-align:center; font-size:1.15rem; color:#222; font-weight:800; }
+.title .shimmer {
+  display:inline-block; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.55) 45%, rgba(255,255,255,0) 80%);
+  -webkit-background-clip:text; background-clip:text; color:transparent; background-size:200% 100%;
+  animation: shimmer 2.4s linear infinite;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+.subtitle { text-align:center; color:var(--muted); margin-bottom:14px; font-weight:600; font-size:0.95rem }
+
+.range-container { display:flex; flex-direction:column; align-items:center; gap:12px; margin:16px 0; }
+.range-container span { font-size:1.25rem; font-weight:700; color:#222; }
+input[type="range"]{
+  width:100%;
+  -webkit-appearance:none;
+  height:14px;
+  border-radius:10px;
+  background: #eee;
+  outline:none;
+  transition: background 0.3s;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background: linear-gradient(90deg,var(--primary),var(--primary-2));
+  cursor:pointer;
+  box-shadow: 0 4px 12px rgba(74,0,224,0.3);
+  transition: transform 0.2s ease;
+}
+input[type="range"]:active::-webkit-slider-thumb{ transform:scale(1.15); }
+input[type="range"]::-moz-range-thumb{
+  width:28px; height:28px; border-radius:50%;
+  background: linear-gradient(90deg,var(--primary),var(--primary-2));
+  cursor:pointer; box-shadow: 0 4px 12px rgba(74,0,224,0.3);
+}
+
+.actions { margin-top:24px; display:flex; gap:12px; align-items:center; flex-direction:column; }
+.btn {
+  width:100%; max-width:420px; padding:14px 16px; border-radius:12px; border:none; cursor:pointer; font-weight:900; color:#fff;
+  background:linear-gradient(90deg,var(--primary),var(--primary-2)); box-shadow: 0 20px 56px rgba(106,27,154,0.12);
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s, filter .12s;
+  font-size:1.02rem; letter-spacing:0.6px;
+}
+.btn:disabled{ opacity:0.56; cursor:not-allowed; transform:none; box-shadow:none; filter:grayscale(.05); }
+.btn.enabled { animation: btnPulse 2.8s ease-in-out infinite; }
+@keyframes btnPulse{0%{box-shadow:0 20px 56px rgba(106,27,154,0.12)}50%{box-shadow:0 26px 72px rgba(106,27,154,0.16)}100%{box-shadow:0 20px 56px rgba(106,27,154,0.12)}}
+
+.btn.back {
+  background: rgba(255,255,255,0.4);
+  color:#111;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+.btn.back:hover { background: rgba(255,255,255,0.6); transform: translateY(-2px); box-shadow: 0 18px 46px rgba(0,0,0,0.12); }
+
+</style>
+</head>
+<body>
+<div class="page">
+<form method="post" class="card" id="heightForm">
+  {% csrf_token %}
+  <div class="logo">
+    <i class="fas fa-dumbbell"></i>
+    <div class="brand">FITNESS</div>
+  </div>
+
+  <h1 class="title"><span class="shimmer">What is your height?</span></h1>
+  <div class="subtitle">Set your height to customize your plan ✨</div>
+
+  <div class="range-container">
+    <span id="height_val">170 cm</span>
+    <input type="range" name="value" min="120" max="220" value="170" id="heightInput">
+  </div>
+
+  <div class="actions">
+    <button type="button" class="btn enabled" id="nextBtn">Next</button>
+    <button type="button" class="btn back" onclick="window.history.back()">Back</button>
+  </div>
+</form>
+</div>
+
+<div id="successModal" style="display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+  <div style="background-color: #fefefe; margin: 15% auto; padding: 20px; border-radius: 10px; width: 80%; max-width: 400px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <i class="fas fa-check" style="color: #4CAF50; font-size: 3rem; margin-bottom: 16px;"></i>
+    <h2 style="color: var(--primary); margin: 0 0 16px 0; font-weight: 700;">Success!</h2>
+    <p style="color: var(--muted); margin: 0 0 24px 0; font-size: 1rem;">Your selection has been saved successfully.</p>
+    <button type="button" onclick="document.getElementById('successModal').style.display='none'; document.getElementById('heightForm').submit();" style="background: linear-gradient(90deg, var(--primary), var(--primary-2)); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.2s ease;">OK</button>
+  </div>
+</div>
+
+<script>
+const heightInput = document.getElementById('heightInput');
+const heightVal = document.getElementById('height_val');
+heightInput.addEventListener('input', ()=>{
+  heightVal.textContent = heightInput.value + ' cm';
+});
+
+(function() {
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.addEventListener('click', (e) => {
+    // Show success popup
+    document.getElementById('successModal').style.display = 'block';
+  });
+})();
+</script>
+</body>
+</html>

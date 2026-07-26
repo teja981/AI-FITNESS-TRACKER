@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Start Your Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+body {
+    background-color: lavender;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    animation: fadeInBody 1s ease forwards;
+}
+
+@keyframes fadeInBody {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.container {
+    background-color: white;
+    padding: 3em;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 400px;
+    box-sizing: border-box;
+    animation: slideInContainer 0.8s ease forwards;
+}
+
+@keyframes slideInContainer {
+    from {opacity: 0; transform: translateY(30px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    gap: 10px;
+    animation: floatLogo 3s ease-in-out infinite;
+}
+@keyframes floatLogo {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+}
+
+.logo-container h2 {
+    margin: 0;
+    font-size: 2.2em;
+    color: #4A00E0;
+}
+
+.logo-container .fa-dumbbell {
+    color: #4A00E0;
+    font-size: 1.2em;
+}
+
+h1 {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #4A00E0;
+    margin-top: 0;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    animation: fadeInText 1s ease forwards;
+}
+
+p {
+    font-size: 1em;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    animation: fadeInText 1.2s ease forwards;
+}
+
+@keyframes fadeInText {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+.cta, .next-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: block;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.cta {
+    background-color: #4A00E0;
+    color: white;
+    animation: glowCTA 1.5s infinite alternate;
+}
+
+@keyframes glowCTA {
+    from { box-shadow: 0 0 15px rgba(74,0,224,0.3);}
+    to { box-shadow: 0 0 25px rgba(74,0,224,0.5);}
+}
+
+.cta:hover {
+    background-color: #3e00b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74,0,224,0.4);
+}
+
+.next-btn {
+    background-color: #43a047;
+    color: white;
+}
+
+.next-btn:hover {
+    background-color: #357835;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(67,160,71,0.4);
+}
+
+.icon-fade {
+    animation: iconFade 1.5s ease infinite alternate;
+    color: #4A00E0;
+}
+@keyframes iconFade {
+    from {opacity: 0.6;}
+    to {opacity: 1;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="logo-container">
+        <i class="fas fa-dumbbell"></i>
+        <h2>FITNESS</h2>
+    </div>
+
+    <h1><i class="fas fa-rocket icon-fade"></i> Welcome to Your Fitness Journey!</h1>
+    <p><i class="fas fa-leaf icon-fade"></i> You're all set. Begin tracking your nutrition and fitness goals today and take the first step towards a healthier you.</p>
+
+    <a href="{% url 'macro_summary' %}" class="cta"><i class="fas fa-chart-pie icon-fade"></i> Go to Macro Summary</a>
+    <a href="{% url 'login' %}" class="next-btn"><i class="fas fa-arrow-right icon-fade"></i> Next</a>
+</div>
+</body>
+</html>

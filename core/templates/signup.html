@@ -1,0 +1,263 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - FITNESS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root{
+            --primary:#4A00E0; /* Darker Purple */
+            --primary-2:#6A1B9A; /* Magenta-Purple */
+            --glass-bg: rgba(255,255,255,0.08);
+            --glow-focus: rgba(74,0,224,0.15); /* Stronger glow for focus */
+        }
+
+        /* Page + subtle animated background */
+        html,body{height:100%;margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#E6E6FA 0%, #F8F0FF 100%);display:flex;align-items:center;justify-content:center;overflow:hidden}
+        body::before{
+            content:"";
+            position:fixed;
+            inset:-20%;
+            background: radial-gradient(circle at 10% 20%, rgba(74,0,224,0.08), transparent 8%),
+                         radial-gradient(circle at 90% 80%, rgba(106,27,154,0.06), transparent 8%);
+            filter: blur(40px);
+            animation: bgPulse 8s ease-in-out infinite;
+            z-index:0;
+        }
+        @keyframes bgPulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+
+        /* Card (glass look) */
+        .card{
+            position:relative;
+            z-index:1;
+            width:420px;
+            border-radius:14px;
+            padding:34px 42px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.55)); /* Increased opacity for clarity */
+            backdrop-filter: blur(10px) saturate(120%);
+            -webkit-backdrop-filter: blur(10px) saturate(120%);
+            box-shadow: 0 16px 60px rgba(74,0,224,0.1); /* Slightly stronger shadow */
+            border:1px solid rgba(255,255,255,0.7); /* Stronger white border */
+            overflow:hidden;
+            animation: cardPopUp 0.6s cubic-bezier(.2,.9,.2,1) forwards;
+            opacity:0;
+            transform: translateY(8px) scale(.985);
+        }
+        @keyframes cardPopUp { from{opacity:0; transform:translateY(8px) scale(.985)} to{opacity:1; transform:translateY(0) scale(1)} }
+
+        .card::after{
+            content:"";
+            position:absolute;
+            left:-40px; top:-40px;
+            width:160px; height:160px;
+            background: radial-gradient(circle at 20% 20%, rgba(74,0,224,0.25), transparent 20%); /* Stronger light effect */
+            filter: blur(35px);
+            pointer-events:none;
+        }
+
+        h2.main-title{
+            margin:0 0 12px;
+            font-size:2.0rem;
+            font-weight:700;
+            text-align:center;
+            color:var(--primary);
+            text-shadow: 0 1px 0 rgba(255,255,255,0.6), 0 6px 14px rgba(74,0,224,0.08);
+        }
+        h2.main-title i{ margin-right:8px; color:var(--primary); transform:translateY(2px) }
+
+        .header-tabs{ display:flex; margin-bottom:18px; border-bottom:1px solid rgba(0,0,0,0.08) }
+        .tab{
+            padding:10px 20px; cursor:pointer; font-weight:600; color:#888; position:relative; transition: color .25s, transform .18s, box-shadow .25s; border-radius:8px 8px 0 0; margin-right:6px;
+        }
+        /* ENHANCED Hover Effect for Tabs */
+        .tab:hover:not(.active){ 
+            color:var(--primary); 
+            transform:translateY(-2px); 
+            box-shadow:0 8px 20px rgba(74,0,224,0.1); 
+            background: rgba(74,0,224,0.03); /* Subtle background lift */
+        }
+        /* ENHANCED Active Tab Effect */
+        .tab.active{ 
+            color:var(--primary); 
+            background: linear-gradient(180deg, rgba(74,0,224,0.08), rgba(255,255,255,0.05)); 
+            box-shadow: inset 0 -2px 0 rgba(74,0,224,0.1); 
+        }
+        .tab.active::after{ content:''; position:absolute; bottom:-1px; left:0; width:100%; height:3px; background: linear-gradient(90deg,var(--primary),var(--primary-2)); border-radius:2px }
+
+        .section-title{ font-size:1.05em; font-weight:600; color:#444; margin:10px 0 18px; text-align:center }
+
+        .form-group{ position:relative; margin-bottom:18px; } /* Increased margin for better spacing */
+        
+        /* Interactive Icon Styling */
+        .form-group i{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#AAA; font-size:1.05em; z-index:1; transition:color .25s }
+        /* Icon color change on input focus */
+        .form-group input.form-control:focus + i, 
+        .form-group:focus-within i { 
+            color:var(--primary); 
+        }
+        
+        input.form-control{
+            padding:12px 12px 12px 46px; border-radius:12px; /* Slightly larger radius */
+            border:1px solid rgba(0,0,0,0.1); outline:none; font-size:14px; 
+            width:calc(100% - 0px); color:#222; /* Removed calc margin, let padding handle space */
+            
+            /* Enhanced Glass Look */
+            background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6)); 
+            transition:border-color .25s, box-shadow .25s, transform .15s; 
+            box-sizing:border-box; 
+            box-shadow: inset 0 -4px 12px rgba(0,0,0,0.03); /* Softer inner shadow */
+        }
+        
+        /* ENHANCED Hover Effect for Inputs */
+        input.form-control:hover{ 
+            border-color: rgba(106,27,154,0.4); 
+            transform:translateY(-2px); /* Subtle lift */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05), inset 0 -4px 12px rgba(0,0,0,0.03);
+        }
+        
+        /* ENHANCED Focus/Glow Effect for Inputs */
+        input.form-control:focus{ 
+            border-color:var(--primary); 
+            box-shadow: 0 0 0 4px var(--glow-focus), 0 8px 34px rgba(74,0,224,0.08), 0 0 10px rgba(74,0,224,0.06) inset; 
+            background:#fff; 
+            transform:translateY(0); /* Reset lift on focus for stability */
+        }
+
+        /* phone & radio tweaks */
+        .radio-group{ margin-bottom:14px; padding-left:45px; position:relative }
+        .radio-group i{ left:15px; top:10px; transform:translateY(0) }
+        .radio-group label{ display:inline-block; margin-right:15px; font-weight:500; color:#555; cursor:pointer }
+        .radio-group input[type="radio"]{ margin-right:6px; accent-color:var(--primary); cursor:pointer; transition: transform .15s }
+        
+        /* ENHANCED Radio Hover Effect */
+        .radio-group input[type="radio"]:hover{ transform:scale(1.2); }
+        .radio-group input[type="radio"]:checked{ transform:scale(1.1); }
+
+
+        /* error styling */
+        .errorlist{ color:#e74c3c; font-size:12px; list-style:none; padding:0; margin:6px 0 0 }
+
+        /* Glowing button */
+        button{
+            background: linear-gradient(90deg,var(--primary),var(--primary-2));
+            border:none; padding:14px; border-radius:12px; /* Increased padding and radius */
+            color:#fff; font-weight:700; font-size:1.05em; cursor:pointer; width:100%; margin-top:18px; /* Increased margin */
+            
+            /* Stronger Initial Shadow */
+            box-shadow: 0 16px 48px rgba(106,27,154,0.15), 0 0 30px rgba(74,0,224,0.08);
+            transition: transform .25s, box-shadow .3s;
+        }
+        /* ENHANCED Glowing Hover Effect for Button */
+        button:hover{ 
+            transform:translateY(-6px); /* More pronounced lift */
+            /* Stronger, more colorful glow */
+            box-shadow: 
+                0 24px 72px rgba(106,27,154,0.22), 
+                0 0 50px rgba(74,0,224,0.2); 
+        }
+
+        /* small note text */
+        .note{ font-size:0.92em; color:#666; text-align:center; margin-top:16px }
+        .note a:hover{ text-decoration: underline; color:var(--primary-2); }
+
+        @media (max-width:480px){
+            .card{ width:92%; padding:20px }
+            h2.main-title{ font-size:1.6rem }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2 class="main-title">
+            <i class="fas fa-dumbbell"></i> FITNESS
+        </h2>
+
+        <div class="header-tabs">
+            <div class="tab" onclick="window.location.href='{% url 'login' %}'">Login</div>
+            <div class="tab active">Register</div>
+        </div>
+
+        <div class="section-title">Create Account</div>
+
+        <form method="POST" action="{% url 'signup' %}" id="register-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                {{ form.username }}
+                <i class="fas fa-user"></i>
+                {% if form.username.errors %}<ul class="errorlist">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.email }}
+                <i class="fas fa-envelope"></i>
+                {% if form.email.errors %}<ul class="errorlist">{% for error in form.email.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.mobile }}
+                <i class="fas fa-mobile-alt"></i>
+                {% if form.mobile.errors %}<ul class="errorlist">{% for error in form.mobile.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.password }}
+                <i class="fas fa-lock"></i>
+                {% if form.password.errors %}<ul class="errorlist">{% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.confirm_password }}
+                <i class="fas fa-lock-open"></i> {% if form.confirm_password.errors %}<ul class="errorlist">{% for error in form.confirm_password.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="radio-group">
+                <i class="fas fa-check-circle"></i>
+                <label>{{ form.verification_method.label }}</label>
+                {{ form.verification_method }}
+                {% if form.verification_method.errors %}<ul class="errorlist">{% for error in form.verification_method.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            {% for error in form.non_field_errors %}
+                <div class="errorlist">{{ error }}</div>
+            {% endfor %}
+
+            <button type="submit">Register</button>
+            <div class="note">Already have an account? <a href="{% url 'login' %}" style="color:var(--primary); font-weight:700; text-decoration:none">Sign in</a></div>
+        </form>
+    </div>
+
+    <script>
+        // === JAVASCRIPT TO ENSURE FORM-CONTROL CLASS IS PRESENT ===
+        // This is necessary because Django's default rendering often doesn't add classes.
+        document.addEventListener('DOMContentLoaded', function() {
+            const formInputs = document.querySelectorAll('#register-form input[type="text"], #register-form input[type="email"], #register-form input[type="password"]');
+            
+            formInputs.forEach(input => {
+                input.classList.add('form-control');
+                
+                // Add placeholder if not set by Django form (for better UX)
+                if (!input.placeholder) {
+                    const label = input.closest('.form-group').querySelector('i');
+                    if (label && input.name) {
+                        // Capitalize the field name for a generic placeholder
+                        input.placeholder = input.name.charAt(0).toUpperCase() + input.name.slice(1).replace(/_/g, ' ');
+                    }
+                }
+            });
+
+            // Reorder elements for the 'i' icon to be the *last* child of .form-group
+            // This is required for the CSS selector `input:focus + i` to work correctly.
+            document.querySelectorAll('.form-group').forEach(group => {
+                const icon = group.querySelector('i');
+                if (icon) {
+                    group.appendChild(icon);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

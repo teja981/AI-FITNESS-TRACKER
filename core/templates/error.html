@@ -1,0 +1,29 @@
+<!-- templates/error.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error</title>
+    <style>
+        body {
+            background-color: #fce4e4;
+            color: #b71c1c;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            border: 1px solid #ffcccc;
+            padding: 30px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Oops! Something went wrong.</h2>
+    <p>{{ error_message }}</p>
+</div>
+</body>
+</html>

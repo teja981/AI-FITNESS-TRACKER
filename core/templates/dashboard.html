@@ -1,0 +1,1259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FITNESS Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4A00E0;
+            --secondary-color: #8E2DE2;
+            --accent-color: #2ED8B6;
+            --text-dark: #333;
+            --text-light: #666;
+            --background-light: #f4f7f6;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+            --spacing-unit: 1rem;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .message-container {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .alert {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        .alert.success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .alert.error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .alert.warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
+        .alert.info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 2rem;
+        }
+
+        .sidebar-profile {
+            width: 280px;
+            background: var(--card-background);
+            box-shadow: var(--shadow-light);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: var(--border-radius);
+            margin: 1rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .profile-picture-section {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            border: 3px solid var(--primary-color);
+            transition: border-color 0.3s ease;
+        }
+        .profile-picture-section:hover {
+            border-color: var(--accent-color);
+        }
+        .profile-picture-section:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-upload-icon {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            padding: 0.4rem;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+        .profile-picture-section:hover .profile-upload-icon {
+            background-color: var(--secondary-color);
+        }
+
+        .profile-info {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .profile-info h3 {
+            margin: 0.5rem 0 0.2rem;
+            color: var(--text-dark);
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        .profile-info p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .sidebar-menu {
+            width: 100%;
+        }
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            font-weight: 500;
+        }
+        .sidebar-menu a:hover {
+            background-color: var(--background-light);
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+        .sidebar-menu a.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-light);
+        }
+        .sidebar-menu a.active:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        .sidebar-menu a i {
+            margin-right: 0.8rem;
+            font-size: 1.1rem;
+        }
+        .sidebar-menu a[href$="logout/"] {
+            color: #e74c3c;
+        }
+        .sidebar-menu a[href$="logout/"]:hover {
+            background-color: #fcebeb;
+            color: #c0392b;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 1rem 1rem 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .dashboard-card {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 1.8rem;
+            box-shadow: var(--shadow-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        .dashboard-card-no-hover:hover {
+            transform: none;
+            box-shadow: var(--shadow-light);
+        }
+
+        .dashboard-card h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            font-size: 1.35rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .dashboard-card h3 i {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        .quote-card {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.8rem 2rem;
+            text-align: center;
+            font-style: italic;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-hover);
+        }
+        .quote-card p {
+            margin: 0;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background-color: var(--background-light);
+            border-radius: calc(var(--border-radius) / 2);
+            border: 1px solid var(--border-color);
+        }
+        .stat-item .value {
+            display: block;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 0.3rem;
+        }
+        .stat-item .label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .chart-container-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .chart-canvas {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .chart-canvas canvas {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .personal-info-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .personal-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .info-item .label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-bottom: 0.2rem;
+        }
+        .info-item .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .personal-info-edit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            align-self: flex-end;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .personal-info-edit-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .workout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        .workout-item {
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            text-align: center;
+            background-color: var(--background-light);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .workout-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+        .workout-item h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .workout-item p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        .workout-item img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .table {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: #212529;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+        }
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        .table-hover tbody tr:hover {
+            color: #212529;
+            background-color: rgba(0, 0, 0, 0.075);
+        }
+        
+        .card.bg-dark .table {
+            color: #fff;
+        }
+        .card.bg-dark .table th, .card.bg-dark .table td, .card.bg-dark .table thead th {
+            border-color: #444;
+        }
+        .card.bg-dark .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .card.bg-dark .table-hover tbody tr:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.075);
+        }
+
+        .chatbot-section {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }
+        .chatbox {
+            flex-grow: 1;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            background-color: var(--background-light);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            scroll-behavior: smooth;
+        }
+        .chat-message {
+            padding: 0.6rem 1rem;
+            border-radius: 18px;
+            max-width: 75%;
+            font-size: 0.95rem;
+        }
+        .chat-message.user {
+            align-self: flex-end;
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-message.bot {
+            align-self: flex-start;
+            background-color: #f0f0f0;
+            color: var(--text-dark);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .chat-input-group input[type="text"] {
+            flex-grow: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .chat-input-group input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.2);
+        }
+        .chat-input-group button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .chat-input-group button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+        
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                flex-direction: column;
+                padding-top: 1rem;
+            }
+            .sidebar-profile {
+                width: auto;
+                margin: 1rem;
+                position: static;
+                padding: 1.5rem;
+            }
+            .main-content {
+                padding: 0 1rem 1rem 1rem;
+                margin-right: 0;
+            }
+            .chart-container-group {
+                grid-template-columns: 1fr;
+            }
+            .dashboard-stats {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-info h3 {
+                font-size: 1.2rem;
+            }
+            .profile-info p {
+                font-size: 0.8rem;
+            }
+            .sidebar-menu a {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            .dashboard-card {
+                padding: 1.5rem;
+            }
+            .dashboard-card h3 {
+                font-size: 1.2rem;
+            }
+            .dashboard-stats {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+            .stat-item .value {
+                font-size: 1.4rem;
+            }
+            .workout-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .message-container {
+                width: 95%;
+            }
+            .sidebar-profile {
+                padding: 1rem;
+            }
+            .profile-picture-section {
+                width: 100px;
+                height: 100px;
+            }
+            .profile-info h3 {
+                font-size: 1.1rem;
+            }
+            .profile-info p {
+                font-size: 0.75rem;
+            }
+            .sidebar-menu a {
+                font-size: 0.85rem;
+            }
+            .dashboard-card {
+                padding: 1rem;
+            }
+            .dashboard-card h3 {
+                font-size: 1.1rem;
+            }
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            .quote-card {
+                font-size: 1rem;
+            }
+            .chat-input-group {
+                flex-direction: column;
+            }
+            .chat-input-group button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="message-container" role="alert">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div class="dashboard-container">
+    <div class="sidebar-profile">
+        <form id="profile-picture-form" method="POST" action="{% url 'dashboard' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="profile-picture-section" onclick="document.getElementById('id_profile_image').click();" role="button" aria-label="Upload profile picture" tabindex="0">
+                <img src="{% if user_profile.profile_image %}{{ user_profile.profile_image.url }}{% else %}{% static 'profile_pics/default.png' %}{% endif %}" alt="Profile Picture" class="profile-picture">
+                <input type="file" id="id_profile_image" name="profile_image" accept="image/*" style="display: none;" aria-hidden="true">
+                <div class="profile-upload-icon" aria-hidden="true">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
+        </form>
+        <div class="profile-info">
+            <h3>{{ user_profile.name|default:request.user.username|default:"Fitness User" }}</h3>
+            <p>{{ request.user.email|default:"No Email" }}</p>
+        </div>
+
+        <nav class="sidebar-menu">
+            <ul>
+                <li><a href="{% url 'dashboard' %}" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="{% url 'profile_settings' username=request.user.username %}"><i class="fas fa-user-circle"></i> Personal Information</a></li>
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> Addresses</a></li>
+                <li><a href="#"><i class="fas fa-credit-card"></i> Payment Methods</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> Preferences</a></li>
+                <li><a href="#"><i class="fas fa-shield-alt"></i> Security</a></li>
+                <li><a href="{% url 'logout' %}" style="color: #e74c3c;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="quote-card dashboard-card">
+            <p>"{{ quote_of_the_day|default:"No pain, no gain. Shut up and train." }}"</p>
+        </div>
+
+        <div class="dashboard-card personal-info-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3><i class="fas fa-user"></i> Personal Information</h3>
+                <div style="display: flex; gap: 10px;">
+                    <a href="{% url 'profile_settings' username=request.user.username %}" class="personal-info-edit-btn">Edit</a>
+                    <form method="POST" action="{% url 'generate_plan' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="personal-info-edit-btn" style="background-color: var(--accent-color);">
+                            Generate Plan
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="personal-info-grid">
+                <div class="info-item">
+                    <span class="label">Name</span>
+                    <span class="value">{{ user_profile.name|default:"N/A" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Email</span>
+                    <span class="value">{{ request.user.email|default:"N/A" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Gender</span>
+                    <span class="value">{{ user_profile.gender|default:"N/A" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Age</span>
+                    <span class="value">{{ user_profile.age|default:"N/A" }} years</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Height</span>
+                    <span class="value">{{ user_profile.height|default:"N/A" }} cm</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Activity Level</span>
+                    <span class="value">{{ user_profile.activity_level|default:"N/A" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Goal</span>
+                    <span class="value">{{ user_profile.goal|default:"N/A" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <h3><i class="fas fa-tachometer-alt"></i> Your Current Stats</h3>
+            <div class="dashboard-stats">
+                <div class="stat-item">
+                    <span class="value">{{ user_profile.weight|default:"N/A" }} kg</span>
+                    <span class="label">Current Weight</span>
+                </div>
+                <div class="stat-item">
+                    <span class="value">{{ user_profile.target_weight|default:"N/A" }} kg</span>
+                    <span class="label">Target Weight</span>
+                </div>
+                <div class="stat-item">
+                    <span class="value">{{ bmi|default:"N/A" }}</span>
+                    <span class="label">BMI</span>
+                </div>
+                <div class="stat-item">
+                    <span class="value">{{ calories_remaining|default:"N/A" }}</span>
+                    <span class="label">Cal. Remaining</span>
+                </div>
+                <div class="stat-item">
+                    <span class="value">{{ weight_trend }}</span>
+                    <span class="label">Weight Trend</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container-group">
+            <div class="dashboard-card">
+                <h3><i class="fas fa-chart-pie"></i> Macronutrient Breakdown</h3>
+                <div class="chart-canvas">
+                    <canvas id="macroChart"></canvas>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3><i class="fas fa-chart-line"></i> Weight Trend</h3>
+                <div class="chart-canvas">
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3><i class="fas fa-bullseye"></i> Goal Progress</h3>
+                <div class="chart-canvas">
+                    <canvas id="targetWeightChart"></canvas>
+                </div>
+            </div>
+        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Premium Fitness Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body {
+    background: linear-gradient(135deg, #fefefe, #f5f5ff);
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 30px;
+    color: #333;
+}
+
+/* Dashboard Card */
+.dashboard-card {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(15px);
+    border-radius: 25px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.3s ease;
+}
+.dashboard-card:hover {
+    transform: translateY(-10px) rotateX(3deg) rotateY(3deg);
+    box-shadow: 0 20px 50px rgba(106,90,205,0.3);
+    filter: drop-shadow(0 0 15px rgba(106,90,205,0.2));
+}
+
+/* Card Title */
+h3 { margin-bottom: 15px; font-weight: 600; }
+
+/* Table Card */
+.table-card {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+.table-card th, .table-card td {
+    padding: 12px 14px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s, filter 0.3s;
+    border-radius: 12px;
+}
+.table-card th {
+    background: #D8BFD8; /* Light lavender */
+    color: #fff;
+    font-weight: 600;
+}
+.table-card td {
+    background: rgba(230,230,250,0.85);
+    cursor: pointer;
+}
+.table-card td:hover {
+    transform: translateY(-5px) rotateX(3deg) rotateY(2deg);
+    box-shadow: 0 10px 30px rgba(106,90,205,0.35);
+    background: rgba(230,220,250,0.95);
+    filter: drop-shadow(0 0 10px rgba(106,90,205,0.2));
+}
+
+/* Badges */
+.muscle-badge, .goal-badge, .duration-badge, .meal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+    transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
+}
+.muscle-badge { background: #6A5ACD; }
+.goal-badge { background: #1E90FF; }
+.duration-badge { background: #FF7F50; }
+/* Meal Colors */
+.meal-badge.breakfast { background: linear-gradient(135deg,#FFA500,#FFD580); }
+.meal-badge.lunch { background: linear-gradient(135deg,#1E90FF,#87CEFA); }
+.meal-badge.snacks { background: linear-gradient(135deg,#32CD32,#98FB98); }
+.meal-badge.dinner { background: linear-gradient(135deg,#8A2BE2,#BA55D3); }
+
+.muscle-badge:hover, .goal-badge:hover, .duration-badge:hover, .meal-badge:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 15px rgba(106,90,205,0.5);
+    filter: drop-shadow(0 0 8px rgba(106,90,205,0.4));
+}
+
+/* Small text */
+.small-text { font-size: 0.85rem; color: #555; margin-top: 5px; }
+
+/* Counter animation */
+.count { font-weight: 600; }
+
+/* Table row hover effect */
+.table-card tbody tr:hover td {
+    transform: translateY(-5px) rotateX(3deg) rotateY(2deg);
+    box-shadow: 0 12px 30px rgba(106,90,205,0.25);
+    background: rgba(230,220,250,0.95);
+    filter: drop-shadow(0 0 10px rgba(106,90,205,0.2));
+}
+
+/* Quote Card */
+.quote-card {
+    background: #E6E6FA; /* Lavender */
+    padding: 20px;
+    border-radius: 20px;
+    font-style: italic;
+    color: #4B0082;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.quote-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(106,90,205,0.25);
+}
+
+/* Row Animation */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px);}
+    100% { opacity: 1; transform: translateY(0);}
+}
+.table-card tbody tr {
+    opacity: 0;
+    animation: fadeIn 0.7s forwards;
+}
+.table-card tbody tr:nth-child(1) { animation-delay: 0.2s; }
+.table-card tbody tr:nth-child(2) { animation-delay: 0.4s; }
+.table-card tbody tr:nth-child(3) { animation-delay: 0.6s; }
+.table-card tbody tr:nth-child(4) { animation-delay: 0.8s; }
+.table-card tbody tr:nth-child(5) { animation-delay: 1s; }
+</style>
+</head>
+<body>
+
+<!-- Quote -->
+<div class="quote-card">
+    <i class="fas fa-quote-left"></i> Stay consistent, train hard, and your body will thank you. <i class="fas fa-quote-right"></i>
+</div>
+
+<!-- Workout Plan Card -->
+<div class="dashboard-card">
+    <h3><i class="fas fa-dumbbell"></i> Personalized Workout Plan for {{ today }}</h3>
+    <table class="table-card">
+        <thead>
+            <tr>
+                <th><i class="fas fa-dumbbell"></i> Exercise</th>
+                <th><i class="fas fa-calendar-day"></i> Day</th>
+                <th><i class="fas fa-dumbbell"></i> Sets</th>
+                <th><i class="fas fa-redo"></i> Reps</th>
+                <th><i class="fas fa-heartbeat"></i> Muscle</th>
+                <th><i class="fas fa-stopwatch"></i> Duration</th>
+                <th><i class="fas fa-bullseye"></i> Goal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if personalized_workout %}
+                {% for w in personalized_workout %}
+                    <tr>
+                        <td><i class="fas fa-dumbbell"></i> {{ w.exercise|default:"Exercise" }}</td>
+                        <td><i class="fas fa-calendar-day"></i> {{ w.day|default:"-" }}</td>
+                        <td><i class="fas fa-dumbbell"></i> {{ w.sets|default:"-" }}</td>
+                        <td><i class="fas fa-redo"></i> {{ w.reps|default:"-" }}</td>
+                        <td><span class="muscle-badge"><i class="fas fa-heartbeat"></i> {{ w.muscle_group|default:"General" }}</span></td>
+                        <td><span class="duration-badge"><i class="fas fa-stopwatch"></i> {{ w.duration|default:"-" }} mins</span></td>
+                        <td><span class="goal-badge"><i class="fas fa-bullseye"></i> {{ w.goal|default:user_profile.goal|default:"-" }}</span></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7">No personalized workouts yet.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Diet Plan Card -->
+<div class="dashboard-card">
+    <h3><i class="fas fa-apple-alt"></i> Personalized Diet Plan for {{ today }}</h3>
+    <table class="table-card">
+        <thead>
+            <tr>
+                <th><i class="fas fa-utensils"></i> Meal</th>
+                <th><i class="fas fa-hamburger"></i> Food Items</th>
+                <th><i class="fas fa-fire"></i> Calories</th>
+                <th><i class="fas fa-drumstick-bite"></i> Protein</th>
+                <th><i class="fas fa-bread-slice"></i> Carbs</th>
+                <th><i class="fas fa-cheese"></i> Fat</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if personalized_diet %}
+                {% for meal in personalized_diet %}
+                    <tr>
+                        <td>
+                            {% with meal_time=meal.meal_time|default:""|lower %}
+                                <span class="meal-badge {{ meal_time }}">
+                                    <i class="fas fa-utensils"></i> {{ meal.meal_time }}
+                                </span>
+                            {% endwith %}
+                        </td>
+                        <td>{{ meal.items|default:"-" }}</td>
+                        <td class="count" data-target="{{ meal.calories|default:"0" }}"><i class="fas fa-fire"></i> 0</td>
+                        <td class="count" data-target="{{ meal.protein|default:"0" }}"><i class="fas fa-drumstick-bite"></i> 0</td>
+                        <td class="count" data-target="{{ meal.carbs|default:"0" }}"><i class="fas fa-bread-slice"></i> 0</td>
+                        <td class="count" data-target="{{ meal.fat|default:"0" }}"><i class="fas fa-cheese"></i> 0</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6">No personalized diet yet.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+// Counter animation
+document.querySelectorAll('.count').forEach(counter => {
+    const updateCount = () => {
+        const target = +counter.getAttribute('data-target');
+        const count = +counter.innerText.replace(/\D/g,'');
+        const increment = target / 50;
+        if(count < target){
+            counter.innerText = Math.ceil(count + increment);
+            setTimeout(updateCount, 20);
+        } else {
+            counter.innerText = target;
+        }
+    };
+    updateCount();
+});
+</script>
+
+</body>
+</html>
+
+
+
+
+<div class="dashboard-card">
+    <style>
+        /* Define a custom variable for the button's color theme */
+        :root {
+            --fitbot-lavender: #9370DB;
+            --fitbot-lavender-light: #A88BEB;
+            --fitbot-shadow-glow: rgba(147, 112, 219, 0.5);
+        }
+
+        /* Basic styling for the link-as-a-button */
+        .btn-primary {
+            /* Appearance */
+            background: var(--fitbot-lavender);
+            color: white;
+            
+            /* Sizing and Layout */
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none; /* Removes the underline from the link */
+            font-weight: 600;
+            text-align: center;
+            
+            /* Shape and Polish */
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            
+            /* Transition and Shadow for effects */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Hover and Glowing Effect */
+        .btn-primary:hover {
+            background: var(--fitbot-lavender-light); 
+            /* Subtle lift and glow on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px var(--fitbot-shadow-glow);
+        }
+
+        /* Ensure the dashboard-card content is neatly aligned */
+        .dashboard-card p {
+            margin-top: 15px; /* Add some space below the title */
+            margin-bottom: 0;
+        }
+    </style>
+
+    <h3><i class="fas fa-robot"></i> Ask FitBot</h3>
+    <p>
+        <a href="{% url 'chatbot' %}" class="btn btn-primary">Go to FitBot Chat Page</a>
+    </p>
+</div>
+        <div class="dashboard-card">
+            <h3><i class="fas fa-dumbbell"></i> Today's Workouts - {{ current_day }}</h3>
+            <div class="workout-grid">
+                {% if today_workouts %}
+                    {% for workout_name, gif_url in today_workouts %}
+                        <div class="workout-item">
+                            <h4>{{ workout_name }}</h4>
+                            <img src="{% static 'workouts/'|add:gif_url %}" alt="{{ workout_name }}" loading="lazy" onerror="this.src='{% static 'workouts/rest.gif' %}';">
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="workout-item">
+                        <h4>No Workouts Scheduled</h4>
+                        <p>Enjoy your rest day!</p>
+                        <img src="{% static 'workouts/rest.gif' %}" alt="Rest Day" loading="lazy">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <h3><i class="fas fa-calendar-alt"></i> Upcoming Workouts (Next 3 Days)</h3>
+            <div class="workout-grid">
+                {% for day_schedule in upcoming_schedule %}
+                    <div class="workout-item">
+                        <h4>{{ day_schedule.day }}</h4>
+                        {% if day_schedule.workouts %}
+                            {% for workout_name, gif_url in day_schedule.workouts %}
+                                <p>{{ workout_name }}</p>
+                                <img src="{% static 'workouts/'|add:gif_url %}" alt="{{ workout_name }}" loading="lazy" onerror="this.src='{% static 'workouts/rest.gif' %}';">
+                            {% endfor %}
+                        {% else %}
+                            <p>Rest Day 💤 or no specific workouts.</p>
+                            <img src="{% static 'workouts/rest.gif' %}" alt="Rest Day" loading="lazy">
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Auto-hide messages
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 3000);
+
+        // Profile image upload
+        const profileImageInput = document.getElementById('id_profile_image');
+        if (profileImageInput) {
+            profileImageInput.addEventListener('change', () => {
+                document.getElementById('profile-picture-form').submit();
+            });
+        }
+
+        // --- Chatbot Functionality ---
+        const chatbox = document.getElementById('chatbox');
+        const chatInput = document.getElementById('chatInput');
+        const chatSubmitBtn = document.getElementById('chatSubmitBtn');
+
+        function getCookie(name) {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    return decodeURIComponent(cookie.substring(name.length + 1));
+                }
+            }
+            return null;
+        }
+
+        function createChatMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', sender);
+            messageDiv.textContent = text;
+            return messageDiv;
+        }
+
+        async function handleBotRequest() {
+            const userText = chatInput.value.trim();
+            if (!userText) return;
+
+            chatbox.appendChild(createChatMessage(userText, 'user'));
+            chatInput.value = '';
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            try {
+                const response = await fetch('/api/ask-bot/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ 'message': userText })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                chatbox.appendChild(createChatMessage(data.reply, 'bot'));
+            } catch (error) {
+                console.error('Error:', error);
+                chatbox.appendChild(createChatMessage('Sorry, I am having trouble. Please try again.', 'bot'));
+            } finally {
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }
+        }
+
+        if (chatSubmitBtn && chatInput) {
+            chatSubmitBtn.addEventListener('click', handleBotRequest);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleBotRequest();
+                }
+            });
+        }
+
+        // --- Chart.js Initialization ---
+        function initializeCharts() {
+            // Macro Chart
+            const macroChartCanvas = document.getElementById("macroChart");
+            if (macroChartCanvas) {
+                const macroData = {
+                    labels: ["Calories", "Protein", "Carbs", "Fat"],
+                    datasets: [{
+                        data: [
+                            {{ user_profile.calories|default:0 }},
+                            {{ user_profile.protein|default:0 }},
+                            {{ user_profile.carbs|default:0 }},
+                            {{ user_profile.fat|default:0 }}
+                        ],
+                        backgroundColor: ["#f39c12", "#28a745", "#3498db", "#e74c3c"],
+                        hoverOffset: 10
+                    }]
+                };
+                new Chart(macroChartCanvas, {
+                    type: 'doughnut',
+                    data: macroData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: '#555', font: { family: 'Poppins' } } },
+                            tooltip: { callbacks: { label: (context) => {
+                                let label = context.label || '';
+                                if (label) { label += ': '; }
+                                if (context.parsed !== null) { label += context.parsed; }
+                                return label;
+                            }}}
+                        }
+                    }
+                });
+            }
+
+            // Weight Line Chart
+            const weightChartCanvas = document.getElementById("weightChart");
+            if (weightChartCanvas) {
+                const weightData = {
+                    labels: {{ dates|safe }},
+                    datasets: [{
+                        label: "Weight (kg)",
+                        data: {{ weights|safe }},
+                        fill: true,
+                        borderColor: "#4A00E0",
+                        backgroundColor: "rgba(74, 0, 224, 0.2)",
+                        tension: 0.4,
+                        pointBackgroundColor: "#4A00E0",
+                        pointBorderColor: "#fff",
+                        pointHoverRadius: 8,
+                        pointHoverBackgroundColor: "#6A1B9A",
+                        pointHoverBorderColor: "#fff",
+                        borderWidth: 2
+                    }]
+                };
+                new Chart(weightChartCanvas, {
+                    type: 'line',
+                    data: weightData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { ticks: { color: '#777', font: { family: 'Poppins' } }, grid: { color: '#eee' } },
+                            y: { beginAtZero: false, ticks: { color: '#777', font: { family: 'Poppins' } }, grid: { color: '#eee' } }
+                        },
+                        plugins: { legend: { labels: { color: '#555', font: { family: 'Poppins' } } } }
+                    }
+                });
+            }
+
+            // Target Weight Bar Chart
+            const targetWeightChartCanvas = document.getElementById("targetWeightChart");
+            if (targetWeightChartCanvas) {
+                const targetWeightData = {
+                    labels: ["Current Weight", "Target Weight"],
+                    datasets: [{
+                        label: "Weight (kg)",
+                        data: [{{ user_profile.weight|default:0 }}, {{ user_profile.target_weight|default:0 }}],
+                        backgroundColor: ["#3498db", "#2ecc71"],
+                        borderColor: ["#3498db", "#2ecc71"],
+                        borderWidth: 1
+                    }]
+                };
+                new Chart(targetWeightChartCanvas, {
+                    type: 'bar',
+                    data: targetWeightData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { ticks: { color: '#777', font: { family: 'Poppins' } }, grid: { display: false } },
+                            y: { beginAtZero: true, ticks: { color: '#777', font: { family: 'Poppins' } }, grid: { color: '#eee' } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        }
+
+        // --- NEW: Highlight personalized sections briefly ---
+        function highlightSection(element, color) {
+            if (element && element.children.length > 1) {
+                element.style.boxShadow = `0 0 0 3px ${color}`;
+                setTimeout(() => { element.style.boxShadow = ''; }, 2000);
+            }
+        }
+        
+        const personalizedWorkoutSection = document.getElementById('personalized-workout-section');
+        const personalizedDietSection = document.getElementById('personalized-diet-section');
+        highlightSection(personalizedWorkoutSection, 'rgba(46,216,182,0.12)');
+        highlightSection(personalizedDietSection, 'rgba(74,0,224,0.08)');
+
+        initializeCharts();
+    });
+</script>
+</body>
+</html>

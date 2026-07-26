@@ -1,0 +1,13 @@
+.venv/
+chatbotenv/
+db.sqlite3
+staticfiles/
+media/
+profile_pics/
+.mypy_cache/
+__pycache__/
+*.pyc
+.env
+.vscode/
+.DS_Store
+Thumbs.db

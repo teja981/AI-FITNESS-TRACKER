@@ -1,0 +1,363 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal Information Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4A00E0;
+            --secondary-color: #8E2DE2;
+            --accent-color: #2ED8B6;
+            --text-dark: #333;
+            --text-light: #666;
+            --background-light: #f4f7f6;
+            --card-background: #ffffff;
+            --border-color: #e0e0e0;
+            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+            --spacing-unit: 1rem;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .message-container {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .alert {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        .alert.success { color: #155724; background-color: #d4edda; border-color: #c3e6cb; }
+        .alert.error { color: #721c24; background-color: #f8d7da; border-color: #f5c6cb; }
+        .alert.warning { color: #856404; background-color: #fff3cd; border-color: #ffeeba; }
+        .alert.info { color: #0c5460; background-color: #d1ecf1; border-color: #bee5eb; }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 2rem;
+        }
+
+        .sidebar-profile {
+            width: 280px;
+            background: var(--card-background);
+            box-shadow: var(--shadow-light);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: var(--border-radius);
+            margin: 1rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .profile-picture-section {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            border: 3px solid var(--primary-color);
+            transition: border-color 0.3s ease;
+        }
+        .profile-picture { width: 100%; height: 100%; object-fit: cover; }
+        .profile-upload-icon {
+            position: absolute; bottom: 5px; right: 5px; background-color: var(--primary-color);
+            color: white; border-radius: 50%; padding: 0.4rem; font-size: 0.9rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); transition: background-color 0.3s ease;
+        }
+
+        .profile-info { text-align: center; margin-bottom: 2rem; }
+        .profile-info h3 { margin: 0.5rem 0 0.2rem; color: var(--text-dark); font-size: 1.4rem; font-weight: 600; }
+        .profile-info p { margin: 0; color: var(--text-light); font-size: 0.9rem; }
+
+        .sidebar-menu { width: 100%; }
+        .sidebar-menu ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li { margin-bottom: 0.5rem; }
+        .sidebar-menu a {
+            display: flex; align-items: center; padding: 0.8rem 1rem; color: var(--text-light);
+            text-decoration: none; border-radius: var(--border-radius);
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            font-weight: 500;
+        }
+        .sidebar-menu a:hover { background-color: var(--background-light); color: var(--primary-color); transform: translateX(5px); }
+        .sidebar-menu a.active { background-color: var(--primary-color); color: white; box-shadow: var(--shadow-light); }
+        .sidebar-menu a i { margin-right: 0.8rem; font-size: 1.1rem; }
+
+        .main-content {
+            flex-grow: 1; padding: 1rem 1rem 1rem 0; display: flex; flex-direction: column;
+            gap: 1.5rem; margin-right: 1rem;
+        }
+
+        .dashboard-card {
+            background: var(--card-background); border-radius: var(--border-radius); padding: 1.8rem;
+            box-shadow: var(--shadow-light); transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .dashboard-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+
+        .dashboard-card h3 {
+            margin-top: 0; margin-bottom: 1.5rem; color: var(--primary-color); font-size: 1.35rem;
+            font-weight: 600; display: flex; align-items: center; gap: 0.75rem;
+        }
+        .dashboard-card h3 i { font-size: 1.5rem; color: var(--accent-color); }
+        
+        /* Styles for the display-only section */
+        .personal-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .info-item {
+            margin-bottom: 0.5rem;
+        }
+        .info-item h4 {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .info-item p {
+            margin: 0.2rem 0 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Profile Settings Form Specific Styles */
+        .profile-form-group { margin-bottom: 1.5rem; }
+        .profile-form-group label {
+            display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--primary-color);
+        }
+        .profile-form-group input,
+        .profile-form-group select {
+            width: 100%; padding: 0.8rem; border: 1px solid var(--border-color);
+            border-radius: 8px; font-size: 1rem; font-family: 'Poppins', sans-serif;
+            background-color: var(--background-light); transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+        .profile-form-group input:focus,
+        .profile-form-group select:focus {
+            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.1);
+        }
+        .profile-form-group input:disabled {
+            background-color: #e9ecef; cursor: not-allowed; color: #6c757d;
+        }
+
+        .form-action-buttons {
+            display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem;
+            font-weight: 600; cursor: pointer; text-decoration: none; text-align: center;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: var(--secondary-color); transform: translateY(-2px); }
+        .btn-secondary { background-color: var(--border-color); color: var(--text-light); }
+        .btn-secondary:hover { background-color: #d1d1d1; transform: translateY(-2px); }
+
+        @media (max-width: 1024px) {
+            .dashboard-container { flex-direction: column; padding-top: 1rem; }
+            .sidebar-profile { width: auto; margin: 1rem; position: static; padding: 1.5rem; }
+            .main-content { padding: 0 1rem 1rem 1rem; margin-right: 0; }
+        }
+        @media (max-width: 768px) {
+            .personal-info-grid { grid-template-columns: 1fr; }
+            .profile-info h3 { font-size: 1.2rem; }
+            .profile-form-group { margin-bottom: 1rem; }
+            .form-action-buttons { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="message-container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div class="dashboard-container">
+    <div class="sidebar-profile">
+        <div class="profile-picture-section">
+            <img src="{% if user_profile.profile_image %}{{ user_profile.profile_image.url }}{% else %}{% static 'profile_pics/default.png' %}{% endif %}" alt="Profile Picture" class="profile-picture">
+        </div>
+        <div class="profile-info">
+            <h3>{{ user_profile.name|default:user_obj.username|default:"Fitness User" }}</h3>
+            <p>{{ user_obj.email|default:"No Email" }}</p>
+        </div>
+        <nav class="sidebar-menu">
+            <ul>
+                <li><a href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="{% url 'profile_settings' username=user_obj.username %}" class="active"><i class="fas fa-user-circle"></i> Personal Information</a></li>
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> Addresses</a></li>
+                <li><a href="#"><i class="fas fa-credit-card"></i> Payment Methods</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> Preferences</a></li>
+                <li><a href="#"><i class="fas fa-shield-alt"></i> Security</a></li>
+                <li><a href="{% url 'logout' %}" style="color: #e74c3c;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="dashboard-card">
+            <h3><i class="fas fa-user-circle"></i> Personal Information</h3>
+            <div class="personal-info-grid">
+                <div class="info-item">
+                    <h4>Name</h4>
+                    <p>{{ user_profile.name|default:"N/A" }}</p>
+                </div>
+                <div class="info-item">
+                    <h4>Email</h4>
+                    <p>{{ user_obj.email|default:"N/A" }}</p>
+                </div>
+                <div class="info-item">
+                    <h4>Gender</h4>
+                    <p>{{ user_profile.gender|default:"N/A" }}</p>
+                </div>
+                <div class="info-item">
+                    <h4>Age</h4>
+                    <p>
+                        {% if user_profile.age %}
+                            {{ user_profile.age }} years
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="info-item">
+                    <h4>Height</h4>
+                    <p>{{ user_profile.height|default:"N/A" }} cm</p>
+                </div>
+                <div class="info-item">
+                    <h4>Activity Level</h4>
+                    <p>
+                        {% if user_profile.activity_level %}
+                            {{ user_profile.activity_level }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="info-item">
+                    <h4>Goal</h4>
+                    <p>{{ user_profile.goal|default:"N/A" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-card">
+            <h3><i class="fas fa-user-edit"></i> Edit Personal Information</h3>
+            <form method="POST" action="{% url 'profile_settings' username=user_obj.username %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="profile-form-group">
+                    <label for="id_profile_image">Profile Picture</label>
+                    <input type="file" id="id_profile_image" name="profile_image" accept="image/*">
+                </div>
+                <div class="profile-form-group">
+                    <label for="id_name">Full Name</label>
+                    <input type="text" id="id_name" name="name" value="{{ user_profile.name|default:'' }}">
+                </div>
+                <div class="profile-form-group">
+                    <label for="id_gender">Gender</label>
+                    <select id="id_gender" name="gender">
+                        <option value="">Select...</option>
+                        <option value="Male" {% if user_profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if user_profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if user_profile.gender == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="profile-form-group">
+                    <label for="id_age">Age</label>
+                    <input type="number" id="id_age" name="age" value="{{ user_profile.age|default:'' }}" min="1" max="120">
+                </div>
+                <div class="profile-form-group">
+                    <label for="id_height">Height (cm)</label>
+                    <input type="number" id="id_height" name="height" value="{{ user_profile.height|default:'' }}" min="50" max="300">
+                </div>
+                <div class="profile-form-group">
+                    <label for="id_weight">Weight (kg)</label>
+                    <input type="number" id="id_weight" name="weight" value="{{ user_profile.weight|default:'' }}" step="0.1" min="20" max="500">
+                </div>
+                <div class="profile-form-group">
+                    <label for="id_target_weight">Target Weight (kg)</label>
+                    <input type="number" id="id_target_weight" name="target_weight" value="{{ user_profile.target_weight|default:'' }}" step="0.1" min="20" max="500">
+                </div>
+                <div class="profile-form-group">
+                    <label for="id_goal">Fitness Goal</label>
+                    <select id="id_goal" name="goal">
+                        <option value="">Select...</option>
+                        <option value="Cut" {% if user_profile.goal == 'Cut' %}selected{% endif %}>Cut (Weight Loss)</option>
+                        <option value="Bulk" {% if user_profile.goal == 'Bulk' %}selected{% endif %}>Bulk (Muscle Gain)</option>
+                        <option value="Body Recomposition" {% if user_profile.goal == 'Body Recomposition' %}selected{% endif %}>Body Recomposition (Build Muscle & Lose Fat)</option>
+                    </select>
+                </div>
+                <div class="profile-form-group">
+                    <label for="id_activity_level">Activity Level</label>
+                    <select id="id_activity_level" name="activity_level">
+                        <option value="">Select...</option>
+                        <option value="Sedentary" {% if user_profile.activity_level == 'Sedentary' %}selected{% endif %}>Sedentary (little or no exercise)</option>
+                        <option value="Lightly active" {% if user_profile.activity_level == 'Lightly active' %}selected{% endif %}>Lightly active (light exercise/sports 1-3 days/week)</option>
+                        <option value="Moderately active" {% if user_profile.activity_level == 'Moderately active' %}selected{% endif %}>Moderately active (moderate exercise/sports 3-5 days/week)</option>
+                        <option value="Very active" {% if user_profile.activity_level == 'Very active' %}selected{% endif %}>Very active (hard exercise/sports 6-7 days a week)</option>
+                        <option value="Extra active" {% if user_profile.activity_level == 'Extra active' %}selected{% endif %}>Extra active (very hard exercise/sports & physical job)</option>
+                    </select>
+                </div>
+                <div class="form-action-buttons">
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const alerts = document.querySelectorAll('.message-container .alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.5s ease-out';
+                setTimeout(() => alert.remove(), 500);
+            }, 5000);
+        });
+    });
+</script>
+
+</body>
+</html>

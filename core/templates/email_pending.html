@@ -1,0 +1,52 @@
+<!-- core/templates/email_pending.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification Pending</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f7f6;
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 20px;
+        }
+        h1 {
+            color: #4A00E0;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .icon {
+            font-size: 3em;
+            color: #2ED8B6;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">&#9993;</div> <!-- Envelope emoji -->
+        <h1>Email Verification Pending</h1>
+        <p>Thank you for signing up! We've sent a verification email to your registered email address.</p>
+        <p>Please check your inbox (and spam folder) and click the verification link to activate your account.</p>
+        <p>You will be redirected to complete your profile once your email is verified.</p>
+        <p><a href="{% url 'login' %}" style="color: #4A00E0; text-decoration: none; font-weight: bold;">Return to Login</a></p>
+    </div>
+</body>
+</html>

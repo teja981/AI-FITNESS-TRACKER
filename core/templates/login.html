@@ -1,0 +1,332 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login - FITNESS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root{
+            --primary:#4A00E0;
+            --primary-2:#6A1B9A;
+            --glass-bg: rgba(255,255,255,0.08);
+            --glass-border: rgba(255,255,255,0.12);
+            --accent: rgba(74,0,224,0.15);
+        }
+
+        /* Page */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            /* gradient background with subtle pattern */
+            background: linear-gradient(135deg,#E6E6FA 0%, #F8F0FF 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Subtle animated background glow */
+        body::before{
+            content:"";
+            position: absolute;
+            inset: -20%;
+            background: radial-gradient(circle at 10% 20%, rgba(74,0,224,0.08), transparent 8%),
+                        radial-gradient(circle at 90% 80%, rgba(106,27,154,0.06), transparent 8%);
+            filter: blur(40px);
+            animation: bgPulse 8s ease-in-out infinite;
+            z-index: 0;
+        }
+        @keyframes bgPulse{
+            0%{transform: scale(1)}
+            50%{transform: scale(1.02)}
+            100%{transform: scale(1)}
+        }
+
+        /* Card (glass effect) */
+        .card {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.5));
+            backdrop-filter: blur(8px) saturate(120%); /* glass effect */
+            -webkit-backdrop-filter: blur(8px) saturate(120%);
+            border-radius: 14px;
+            padding: 34px 42px;
+            width: 420px;
+            color: #222;
+            box-shadow: 0 10px 40px rgba(74,0,224,0.08);
+            border: 1px solid rgba(255,255,255,0.6);
+            overflow: hidden;
+
+            /* Pop-up effect */
+            animation: cardPopUp 0.6s cubic-bezier(.2,.9,.2,1) forwards;
+            opacity: 0; /* Start invisible */
+            transform: translateY(8px) scale(0.985); /* Start slightly smaller */
+        }
+
+        @keyframes cardPopUp {
+            from { opacity: 0; transform: translateY(8px) scale(0.985); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* floating top glow bar */
+        .card::after{
+            content:"";
+            position:absolute;
+            left:-40px;
+            top:-40px;
+            width:160px;
+            height:160px;
+            background: radial-gradient(circle at 20% 20%, rgba(74,0,224,0.18), transparent 20%);
+            filter: blur(30px);
+            pointer-events:none;
+        }
+
+        h2.main-title {
+            text-align: center;
+            margin-bottom: 18px;
+            font-weight: 700;
+            font-size: 2.1em;
+            color: var(--primary);
+            letter-spacing: 0.6px;
+            /* fancy glow text */
+            text-shadow:
+                0 1px 0 rgba(255,255,255,0.6),
+                0 6px 14px rgba(74,0,224,0.06);
+        }
+
+        .main-title i{ margin-right:8px; color:var(--primary); transform: translateY(2px); }
+
+        .header-tabs {
+            display: flex;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #888;
+            position: relative;
+            transition: color 0.25s ease, transform 0.18s ease, box-shadow 0.25s;
+            border-radius: 8px 8px 0 0;
+            margin-right: 6px;
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(74,0,224,0.05);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            background: linear-gradient(180deg, rgba(74,0,224,0.06), rgba(255,255,255,0.02));
+            box-shadow: inset 0 -2px 0 rgba(74,0,224,0.06);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-2));
+            border-radius:2px;
+        }
+
+        .section-title {
+            font-size: 1.05em;
+            font-weight: 600;
+            margin-top: 12px;
+            margin-bottom: 18px;
+            color: #444;
+            text-align: center;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #AAA;
+            font-size: 1.05em;
+            z-index: 1;
+            transition: color 0.2s;
+        }
+
+        /* inputs: glass + inner glow */
+        input.form-control {
+            padding: 12px 12px 12px 46px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.06);
+            outline: none;
+            font-size: 14px;
+            width: calc(100% - 60px);
+            color: #222;
+            background: linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.45));
+            transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.08s ease;
+            box-sizing: border-box;
+            box-shadow: inset 0 -6px 18px rgba(0,0,0,0.02);
+        }
+
+        input.form-control:hover {
+            border-color: rgba(106,27,154,0.25);
+            transform: translateY(-1px);
+        }
+
+        input.form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 6px 30px rgba(74,0,224,0.08), 0 0 10px rgba(74,0,224,0.06) inset;
+            background: #fff;
+        }
+
+        /* fancy placeholder / label look */
+        input::placeholder { color: #b8b8b8; font-weight:500; }
+
+        /* glowing button */
+        button {
+            background: linear-gradient(90deg, var(--primary), var(--primary-2));
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.05em;
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.25s ease;
+            width: 100%;
+            margin-top: 12px;
+            box-shadow: 0 10px 30px rgba(106,27,154,0.12), 0 0 30px rgba(74,0,224,0.07);
+        }
+
+        button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 50px rgba(106,27,154,0.16), 0 0 40px rgba(74,0,224,0.12);
+        }
+
+        /* subtle glow under card when button hovered */
+        button:hover ~ .card::after { filter: blur(34px); }
+
+        .errorlist {
+            color: #e74c3c;
+            font-size: 12px;
+            list-style-type: none;
+            margin: 6px 0 0 0;
+            padding: 0;
+        }
+
+        /* forgot password row */
+        .forgot-row {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-top:6px;
+            gap:8px;
+        }
+        .forgot-link {
+            font-size: 0.95em;
+            color: #6b2fb3;
+            text-decoration: none;
+            font-weight:600;
+            transition: color 0.18s ease, transform 0.12s ease;
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+        }
+        .forgot-link:hover { color: var(--primary-2); transform: translateY(-2px); text-decoration:underline; }
+
+        /* small social/fab buttons for visual flair (no function) */
+        .social-row { display:flex; gap:10px; justify-content:center; margin-top:14px; }
+        .fab {
+            width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center;
+            border-radius:10px; background:rgba(255,255,255,0.4); border:1px solid rgba(0,0,0,0.04);
+            box-shadow: 0 6px 18px rgba(74,0,224,0.04); cursor:pointer; transition: transform .15s;
+        }
+        .fab:hover{ transform: translateY(-4px); box-shadow: 0 14px 36px rgba(74,0,224,0.08); }
+
+        /* small responsive tweak */
+        @media (max-width:480px){
+            .card{ width:92%; padding:20px; }
+            h2.main-title{ font-size:1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2 class="main-title">
+            <i class="fas fa-dumbbell"></i> FITNESS
+        </h2>
+
+        <div class="header-tabs">
+            <div class="tab active">Login</div>
+            <div class="tab" onclick="window.location.href='{% url 'signup' %}'">Register</div>
+        </div>
+
+        <div class="section-title">Log In to Your Account</div>
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.username.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.password.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            {% for error in form.non_field_errors %}
+                <div class="errorlist">{{ error }}</div>
+            {% endfor %}
+
+            <div class="forgot-row">
+                <!-- Forgot password link -->
+                <a class="forgot-link" href="{% url 'password_reset' %}">
+                    <i class="fas fa-key"></i> Forgot password?
+                </a>
+
+                <!-- optional: small "Remember me" placeholder (if you use it) -->
+                <label style="font-size:0.95em;color:#666;font-weight:600;">
+                    <input type="checkbox" name="remember" style="margin-right:6px;"> Remember
+                </label>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="social-row" aria-hidden="true">
+            <div class="fab"><i class="fab fa-google"></i></div>
+            <div class="fab"><i class="fab fa-apple"></i></div>
+            <div class="fab"><i class="fab fa-facebook-f"></i></div>
+        </div>
+    </div>
+</body>
+</html>

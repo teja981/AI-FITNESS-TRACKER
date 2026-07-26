@@ -1,0 +1,216 @@
+{% load humanize %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macro Summary — FITNESS</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+    --carbs-color: #008DDA;
+    --protein-color: #02B290;
+    --fat-color: #FFC048;
+    --background-color: #f7f9fc;
+    --card-background: #ffffff;
+    --text-color: #1e293b;
+    --secondary-text-color: #64748b;
+    --primary-accent: #008DDA;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    animation: fadeInPage 1s ease forwards;
+}
+
+@keyframes fadeInPage {
+    from {opacity:0; transform: translateY(20px);}
+    to {opacity:1; transform: translateY(0);}
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
+a.back-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-background);
+    border: 1px solid #e2e8f0;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    text-decoration: none;
+    color: var(--secondary-text-color);
+    font-size: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+a.back-button:hover {
+    background: #e9eef5;
+    color: var(--text-color);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+h1 { font-weight: 700; font-size: 2.2rem; margin: 0; text-align: center; color: var(--primary-accent); }
+.subtitle { margin: 5px 0 15px; font-size: 1.2rem; font-weight: 400; color: var(--secondary-text-color); }
+
+.calories-display {
+    background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+    padding: 25px;
+    border-radius: 15px;
+    margin-top: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    animation: slideUp 0.5s ease forwards;
+}
+.calories { font-size: 3.5rem; font-weight: 900; margin: 0; color: var(--text-color);}
+.calories small { font-size: 1.2rem; font-weight:600; color: var(--secondary-text-color); }
+
+@keyframes slideUp {
+    from {opacity:0; transform: translateY(20px);}
+    to {opacity:1; transform: translateY(0);}
+}
+
+.macro-section {
+    background: var(--card-background);
+    padding: 30px;
+    border-radius: 15px;
+    margin-top: 30px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    animation: slideUp 0.6s ease forwards;
+}
+
+.macro-section-title { font-size: 1.5rem; font-weight:600; margin-bottom:20px; color:var(--text-color); }
+
+.pie-chart-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto 20px auto;
+}
+.pie-chart-container svg { transform: rotate(-90deg); z-index:10; }
+.chart-label {
+    position: absolute;
+    top:50%; left:50%;
+    transform: translate(-50%,-50%);
+    text-align:center;
+    z-index:20;
+    font-size:1.2rem; font-weight:600; color:var(--text-color);
+}
+
+/* Macro items with icons & hover animations */
+.macro-list { margin-top: 20px; display:flex; flex-direction:column; gap:15px; list-style:none; padding:0; }
+.macro-item {
+    display: flex; align-items: center; justify-content: space-between;
+    background:#f8fafc; padding:12px 20px; border-radius:10px; border:1px solid #e2e8f0;
+    cursor:pointer; transition: all 0.3s ease;
+}
+.macro-item:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.macro-item i { font-size: 1.3rem; margin-right:10px; color:var(--primary-accent);}
+.macro-item .value { font-weight:600; color: var(--text-color);}
+.macro-item .percentage { font-weight:400; font-size:0.9rem; color:var(--secondary-text-color); margin-left:5px; }
+
+.color-box { width:15px; height:15px; border-radius:4px; margin-right:8px; }
+.carbs-color { background-color: var(--carbs-color); }
+.protein-color { background-color: var(--protein-color); }
+.fat-color { background-color: var(--fat-color); }
+
+.start-button {
+    width:100%; max-width:400px;
+    margin-top:30px; padding:15px;
+    background: linear-gradient(90deg,var(--primary-accent),#7B1FA2);
+    color:#fff; border:none; border-radius:10px;
+    font-size:1.1rem; font-weight:600; cursor:pointer;
+    box-shadow: 0 4px 15px rgba(0,141,218,0.3);
+    transition: all 0.3s ease;
+}
+.start-button:hover {
+    background: linear-gradient(90deg,#007bb3,#9C27B0);
+    box-shadow: 0 6px 20px rgba(0,141,218,0.4);
+    transform: translateY(-3px);
+}
+</style>
+</head>
+<body>
+<div class="header">
+    <a href="{% url 'dashboard' %}" class="back-button"><i class="fas fa-arrow-left"></i></a>
+</div>
+
+<div class="container">
+    <h1>It's done!</h1>
+    <p class="subtitle">Your personalized macro plan is ready ✨</p>
+
+    <!-- Calories -->
+    <div class="calories-display">
+        <p class="subtitle" style="margin-bottom:5px;color:#4b5563;">Daily Calories</p>
+        <p class="calories">{{ calories|floatformat:0|intcomma }} <small>Cal</small></p>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="pie-chart-container">
+        <svg width="100%" height="100%" viewBox="0 0 100 100">
+            <circle r="45" cx="50" cy="50" fill="transparent" stroke="#e2e8f0" stroke-width="15"></circle>
+            <circle r="45" cx="50" cy="50" fill="transparent" stroke="url(#carbsGradient)" stroke-width="15"
+                stroke-dasharray="{{ carbs_percent }} 100" stroke-dashoffset="0">
+                <animate attributeName="stroke-dasharray" from="0 100" to="{{ carbs_percent }} 100" dur="1s" fill="freeze"/>
+            </circle>
+            <circle r="45" cx="50" cy="50" fill="transparent" stroke="url(#proteinGradient)" stroke-width="15"
+                stroke-dasharray="{{ protein_percent }} 100" stroke-dashoffset="{{ carbs_percent }}">
+                <animate attributeName="stroke-dasharray" from="0 100" to="{{ protein_percent }} 100" dur="1s" begin="1s" fill="freeze"/>
+                <animate attributeName="stroke-dashoffset" from="0" to="{{ carbs_percent }}" dur="1s" begin="1s" fill="freeze"/>
+            </circle>
+            <circle r="45" cx="50" cy="50" fill="transparent" stroke="url(#fatGradient)" stroke-width="15"
+                stroke-dasharray="{{ fat_percent }} 100" stroke-dashoffset="{{ carbs_end }}">
+                <animate attributeName="stroke-dasharray" from="0 100" to="{{ fat_percent }} 100" dur="1s" begin="2s" fill="freeze"/>
+                <animate attributeName="stroke-dashoffset" from="0" to="{{ carbs_end }}" dur="1s" begin="2s" fill="freeze"/>
+            </circle>
+            <defs>
+                <linearGradient id="carbsGradient"><stop offset="0%" stop-color="#00BFFF"/><stop offset="100%" stop-color="#1E90FF"/></linearGradient>
+                <linearGradient id="proteinGradient"><stop offset="0%" stop-color="#00FA9A"/><stop offset="100%" stop-color="#02B290"/></linearGradient>
+                <linearGradient id="fatGradient"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#FFA500"/></linearGradient>
+            </defs>
+        </svg>
+        <div class="chart-label">{{ calories|floatformat:0|intcomma }} Cal</div>
+    </div>
+
+    <!-- Macro List with FA icons -->
+    <ul class="macro-list">
+        <li class="macro-item"><i class="fas fa-bread-slice carbs-color"></i><span>Carbohydrates</span>
+            <div><span class="value">{{ carbs|floatformat:1 }} g</span><span class="percentage">({{ carbs_percent }}%)</span></div>
+        </li>
+        <li class="macro-item"><i class="fas fa-drumstick-bite protein-color"></i><span>Protein</span>
+            <div><span class="value">{{ protein|floatformat:1 }} g</span><span class="percentage">({{ protein_percent }}%)</span></div>
+        </li>
+        <li class="macro-item"><i class="fas fa-bacon fat-color"></i><span>Fats</span>
+            <div><span class="value">{{ fat|floatformat:1 }} g</span><span class="percentage">({{ fat_percent }}%)</span></div>
+        </li>
+    </ul>
+
+    <button class="start-button" onclick="location.href='{% url 'start_journey' %}'">Start Now!</button>
+</div>
+</body>
+</html>

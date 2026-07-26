@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Select Your Goal — FITNESS</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --primary:#4A00E0;
+  --primary-2:#7B1FA2;
+  --glass: rgba(255,255,255,0.78);
+  --muted:#6b6b6b;
+  --card-w:480px;
+}
+
+html,body{height:100%;margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+body{
+  background: linear-gradient(180deg,#FBF8FF 0%, #F0F4FF 100%);
+  display:flex;align-items:center;justify-content:center;padding:32px;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+
+.page { width:100%; max-width:var(--card-w); margin:0 auto; z-index:1; }
+
+.logo { display:flex; gap:10px; align-items:center; justify-content:center; margin-bottom:8px; animation: logoFloat 4s ease-in-out infinite; }
+.logo .fa-dumbbell{ color:var(--primary); font-size:1.4rem; transform:translateY(2px); }
+.brand { font-weight:900; color:var(--primary); font-size:1.6rem; letter-spacing:1.6px; text-transform:uppercase; display:inline-block; transform:translateZ(0); }
+@keyframes logoFloat {0%{transform:translateY(0)}50%{transform:translateY(-3px)}100%{transform:translateY(0)}}
+
+h1.title { margin:12px 0 8px; text-align:center; font-size:1.25rem; color:#222; font-weight:800; }
+.subtitle { text-align:center; color:var(--muted); margin-bottom:16px; font-weight:600; font-size:0.95rem }
+
+.cards-container {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:20px;
+}
+
+.card {
+  background: white;
+  border-radius:16px;
+  width:140px;
+  padding:12px;
+  cursor:pointer;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  overflow:hidden;
+  animation: floatCard 3s ease-in-out infinite;
+}
+.card img {
+  width:100%;
+  border-radius:12px;
+  object-fit:cover;
+  height:100px;
+}
+.card p {
+  margin:0;
+  font-weight:700;
+  font-size:0.95rem;
+  color:#222;
+  text-align:center;
+}
+.card i {
+  font-size: 1.6rem;
+  color: var(--primary-2);
+  transition: transform 0.3s ease, text-shadow 0.3s ease, opacity 0.3s ease;
+  opacity: 0.3; /* dim by default */
+}
+.card.selected i {
+  opacity: 1; /* fully visible when selected */
+  animation: glow 1s ease-in-out infinite alternate, bounce 0.35s ease forwards;
+}
+.card:hover { transform: scale(1.05); box-shadow: 0 0 24px rgba(106,27,154,0.2); }
+.card.selected { 
+  border-image: linear-gradient(90deg,var(--primary),var(--primary-2)) 1; 
+  box-shadow:0 0 32px rgba(74,0,224,0.25); 
+  animation: bounce 0.35s ease forwards;
+}
+
+@keyframes bounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  80% { transform: scale(0.98); }
+  100% { transform: scale(1.03); }
+}
+
+@keyframes floatCard {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes glow {
+  0% { text-shadow: 0 0 2px #7B1FA2; }
+  50% { text-shadow: 0 0 8px #4A00E0; }
+  100% { text-shadow: 0 0 2px #7B1FA2; }
+}
+
+.actions { margin-top:24px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.actions button {
+  min-width:100px;
+  padding:10px 20px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  font-weight:700;
+  font-size:0.95rem;
+  transition: all 0.2s ease;
+}
+.actions button.next {
+  background:linear-gradient(90deg,var(--primary),var(--primary-2));
+  color:#fff;
+  box-shadow: 0 12px 36px rgba(106,27,154,0.12);
+}
+.actions button.next:hover { box-shadow:0 18px 46px rgba(106,27,154,0.18); transform:translateY(-2px);}
+.actions button.back, .actions button.skip {
+  background: rgba(255,255,255,0.6);
+  color:#111;
+  box-shadow: 0 8px 26px rgba(0,0,0,0.08);
+}
+.actions button.back:hover, .actions button.skip:hover { background: rgba(255,255,255,0.8); transform:translateY(-1px); }
+
+</style>
+<script>
+function selectGoal(goal){
+  document.querySelectorAll('.card').forEach(card=>{
+    card.classList.remove('selected');
+  });
+  const selectedCard = document.getElementById(goal);
+  selectedCard.classList.add('selected');
+  document.getElementById('selected_goal_input').value = goal;
+}
+</script>
+</head>
+<body>
+<div class="page">
+  <div class="logo">
+    <i class="fas fa-dumbbell"></i>
+    <div class="brand">FITNESS</div>
+  </div>
+
+  <h1 class="title">Select Your Goal</h1>
+  <div class="subtitle">Choose your fitness objective ✨</div>
+
+  <form method="POST" id="goalForm">
+    {% csrf_token %}
+    <div class="cards-container">
+      <div class="card" id="Cut" onclick="selectGoal('Cut')">
+        <img src="{% static 'images/cut.jpg' %}" alt="Cut">
+        <p>Cut</p>
+        <i class="fas fa-fire"></i>
+      </div>
+      <div class="card" id="Bulk" onclick="selectGoal('Bulk')">
+        <img src="{% static 'images/bulk.jpg' %}" alt="Bulk">
+        <p>Bulk</p>
+        <i class="fas fa-dumbbell"></i>
+      </div>
+      <div class="card" id="BodyRecomposition" onclick="selectGoal('BodyRecomposition')">
+        <img src="{% static 'images/recomp.jpg' %}" alt="Body Recomposition">
+        <p>Body Recomposition</p>
+        <i class="fas fa-sync-alt"></i>
+      </div>
+      <div class="card" id="AbsTraining" onclick="selectGoal('AbsTraining')">
+        <img src="{% static 'images/abs.jpg' %}" alt="Abs Training">
+        <p>Abs Training</p>
+        <i class="fas fa-apple-alt"></i>
+      </div>
+    </div>
+
+    <input type="hidden" name="selected_goal" id="selected_goal_input" />
+
+    <div class="actions">
+      <button type="button" class="next" id="nextBtn">Next</button>
+      <button type="button" class="skip" onclick="window.location.href='{% url 'dashboard' %}'">Skip</button>
+      <button type="button" class="back" onclick="window.history.back()">Back</button>
+    </div>
+  </form>
+</div>
+
+<div id="successModal" style="display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+  <div style="background-color: #fefefe; margin: 15% auto; padding: 20px; border-radius: 10px; width: 80%; max-width: 400px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <i class="fas fa-check" style="color: #4CAF50; font-size: 3rem; margin-bottom: 16px;"></i>
+    <h2 style="color: var(--primary); margin: 0 0 16px 0; font-weight: 700;">Success!</h2>
+    <p style="color: var(--muted); margin: 0 0 24px 0; font-size: 1rem;">Your selection has been saved successfully.</p>
+    <button type="button" onclick="document.getElementById('successModal').style.display='none'; document.getElementById('goalForm').submit();" style="background: linear-gradient(90deg, var(--primary), var(--primary-2)); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: all 0.2s ease;">OK</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  const form = document.getElementById('goalForm');
+  const nextBtn = document.getElementById('nextBtn');
+
+  nextBtn.addEventListener('click', (e) => {
+    const selectedGoal = document.getElementById('selected_goal_input').value;
+    if (!selectedGoal) {
+      alert("Please select your goal.");
+      return;
+    }
+    // Show success popup
+    document.getElementById('successModal').style.display = 'block';
+  });
+})();
+</script>
+</body>
+</html>

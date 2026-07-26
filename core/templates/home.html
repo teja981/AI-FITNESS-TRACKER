@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Fitness Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      color: white;
+    }
+
+    .logo span {
+      color: #fbbf24;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .nav-links a:hover {
+      color: #fbbf24;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .auth-buttons a {
+      background-color: #fbbf24;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-weight: bold;
+      color: black;
+      text-decoration: none;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 1rem;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-size: 0.75rem;
+      z-index: 2;
+    }
+
+    .footer-feedback-form form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .footer-feedback-form input,
+    .footer-feedback-form button {
+      padding: 4px 8px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.75rem;
+    }
+
+    .footer-feedback-form button {
+      background-color: #f8ac32;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .footer-contact-info p {
+      margin: 2px 0;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .footer-feedback-form form {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔁 Fullscreen Background Video -->
+  <div class="video-bg">
+    <video autoplay muted loop playsinline>
+      <source src="{% static 'videos/fitness.mp4' %}" type="video/mp4">
+    </video>
+  </div>
+
+  <!-- ✅ Navbar Over Video -->
+  <nav class="navbar">
+    <div class="logo"><span>AI FITNESS</span></div>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#footer-contact">Contact</a></li>
+    </ul>
+    <div class="auth-buttons">
+      <a href="{% url 'signup' %}">Signup</a>
+      <a href="{% url 'login' %}">Login</a>
+    </div>
+  </nav>
+
+  <!-- ✅ Footer Form Over Video -->
+  <footer id="footer-contact">
+    <div class="footer-left">&copy; 2025 AI Fitness Tracker. All rights reserved.</div>
+    <div class="footer-feedback-form">
+      <form action="/contact/" method="POST">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="message" placeholder="Message" required>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+    <div class="footer-contact-info">
+      <p><strong>Contact Info</strong></p>
+      <p>Amritanagar</p>
+      <p>teja98111@gmail.com</p>
+      <p>6305873724</p>
+    </div>
+  </footer>
+
+</body>
+</html>

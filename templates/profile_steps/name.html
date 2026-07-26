@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Name — FITNESS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* global */
+    *,*::before,*::after{box-sizing:border-box}
+    :root{
+      --primary:#4A00E0;
+      --primary-2:#7B1FA2;
+      --glass: rgba(255,255,255,0.78);
+      --muted:#6b6b6b;
+      --card-w:460px;
+      --gap:18px;
+    }
+
+    html,body{height:100%;margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+    body{
+      background: linear-gradient(180deg,#FBF8FF 0%, #F0F4FF 100%);
+      display:flex;align-items:center;justify-content:center;padding:32px;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* floating background */
+    body::before{
+      content:"";
+      position:fixed;inset:-30%;
+      background:
+        radial-gradient(circle at 8% 20%, rgba(74,0,224,0.12), transparent 12%),
+        radial-gradient(circle at 92% 80%, rgba(106,27,154,0.06), transparent 12%);
+      filter: blur(48px) saturate(120%); z-index:0;
+      animation: bgFloat 12s ease-in-out infinite;
+    }
+    @keyframes bgFloat{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+
+    .page { width:100%; max-width:var(--card-w); margin:0 auto; z-index:1; }
+
+    /* Card */
+    .card {
+      background: linear-gradient(180deg,var(--glass), rgba(255,255,255,0.62));
+      backdrop-filter: blur(10px) saturate(120%);
+      -webkit-backdrop-filter: blur(10px) saturate(120%);
+      border-radius:18px;
+      padding:28px 28px 32px;
+      box-shadow: 0 22px 60px rgba(76,0,150,0.09);
+      border:1px solid rgba(255,255,255,0.75);
+      position:relative;
+      overflow:visible;
+      transform-origin:center;
+      animation: cardIn .6s cubic-bezier(.2,.9,.25,1) both;
+    }
+    @keyframes cardIn { from{opacity:0; transform:translateY(18px) scale(.995)} 60%{transform:translateY(-6px) scale(1.002)} to{opacity:1; transform:translateY(0) scale(1)} }
+
+    .card::after{ content:""; position:absolute; left:-36px; top:-36px; width:140px; height:140px; background: radial-gradient(circle at 20% 20%, rgba(74,0,224,0.16), transparent 24%); filter: blur(26px); pointer-events:none; }
+
+    /* Progress */
+    .progress-wrap{ display:flex; align-items:center; gap:12px; margin-bottom:18px; justify-content:center }
+    .progress { height:8px; width:56%; background:rgba(0,0,0,0.06); border-radius:999px; overflow:hidden; box-shadow: inset 0 -2px 6px rgba(0,0,0,0.03); }
+    .progress > i{ display:block; height:100%; width:16.66%; background: linear-gradient(90deg,var(--primary),var(--primary-2)); transition: width .45s ease; }
+    .step-info { font-weight:700; color:var(--muted); font-size:0.95rem; min-width:76px; text-align:center }
+
+    /* Logo + title */
+    .logo { display:flex; gap:10px; align-items:center; justify-content:center; margin-bottom:8px; animation: logoFloat 4s ease-in-out infinite; }
+    .logo .fa-dumbbell{ color:var(--primary); font-size:1.2rem; transform:translateY(2px); }
+    .brand { font-weight:900; color:var(--primary); font-size:1.45rem; letter-spacing:1.6px; text-transform:uppercase; display:inline-block; transform:translateZ(0); }
+    @keyframes logoFloat {0%{transform:translateY(0)}50%{transform:translateY(-3px)}100%{transform:translateY(0)}}
+
+    h1.title { margin:6px 0 8px; text-align:center; font-size:1.15rem; color:#222; font-weight:800; }
+    .title .shimmer {
+      display:inline-block; background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.55) 45%, rgba(255,255,255,0) 80%);
+      -webkit-background-clip:text; background-clip:text; color:transparent; background-size:200% 100%;
+      animation: shimmer 2.4s linear infinite;
+    }
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    .subtitle { text-align:center; color:var(--muted); margin-bottom:14px; font-weight:600; font-size:0.95rem }
+
+    /* Input with icon + floating label */
+    .field { position:relative; display:flex; align-items:center; gap:12px; margin: 0 12px 12px; }
+    .field .icon { position:absolute; left:14px; color:var(--primary); pointer-events:none; font-size:1.05rem; top:50%; transform:translateY(-50%); opacity:0.96 }
+    .field input[type="text"]{
+      width:100%; padding:16px 18px 16px 48px; border-radius:12px; border:1px solid rgba(0,0,0,0.08);
+      font-size:1rem; outline:none; background: linear-gradient(180deg,#fff,#fbfbfd); color:#111;
+      transition: box-shadow .18s ease, transform .08s ease, border-color .12s, background .12s;
+      box-shadow: inset 0 -6px 18px rgba(0,0,0,0.04);
+    }
+    .field input::placeholder{ color:transparent; } /* required for :placeholder-shown trick */
+
+    /* Label behavior */
+    .field label {
+      position:absolute; left:52px; top:50%; transform:translateY(-50%); color:var(--muted); font-weight:700; pointer-events:none;
+      transition: transform .16s ease, font-size .14s ease, color .14s ease, left .16s ease;
+      background:transparent; padding:0 6px;
+    }
+    /* move label up when focused or when there's content */
+    .field input:focus{ border-color:var(--primary); box-shadow: 0 12px 42px rgba(74,0,224,0.10); background:#fff }
+    .field input:focus + label,
+    .field input:not(:placeholder-shown) + label {
+      transform: translateY(-160%); font-size:0.78rem; color:var(--primary-2);
+      left:52px;
+    }
+
+    /* extra spacing and underline animation */
+    .underline { height:4px; width:0; margin-left:52px; background: linear-gradient(90deg,var(--primary),var(--primary-2)); border-radius:6px; transition: width .32s ease; }
+    .field input:focus ~ .underline, .field input:not(:placeholder-shown) ~ .underline { width:60% }
+
+    /* subtle character hint */
+    .char-hint { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:rgba(0,0,0,0.32); font-size:0.86rem; font-weight:600; }
+
+    /* Button */
+    .actions { margin-top:20px; display:flex; gap:12px; align-items:center; flex-direction:column; }
+    .btn {
+      width:100%; max-width:420px; padding:14px 16px; border-radius:12px; border:none; cursor:pointer; font-weight:900; color:#fff;
+      background:linear-gradient(90deg,var(--primary),var(--primary-2)); box-shadow: 0 20px 56px rgba(106,27,154,0.12);
+      transition: transform .12s ease, box-shadow .12s ease, opacity .12s, filter .12s;
+      font-size:1.02rem; letter-spacing:0.6px;
+    }
+    .btn:disabled{ opacity:0.56; cursor:not-allowed; transform:none; box-shadow:none; filter:grayscale(.05); }
+    /* pulse when enabled */
+    .btn.enabled { animation: btnPulse 2.8s ease-in-out infinite; }
+    @keyframes btnPulse{0%{box-shadow:0 20px 56px rgba(106,27,154,0.12)}50%{box-shadow:0 26px 72px rgba(106,27,154,0.16)}100%{box-shadow:0 20px 56px rgba(106,27,154,0.12)}}
+
+    .note { margin-top:12px; color:var(--muted); font-weight:600; font-size:0.92rem; text-align:center }
+
+    /* success overlay */
+    .success { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.92); border-radius:16px; opacity:0; pointer-events:none; transform:scale(.98); transition: opacity .28s ease, transform .28s ease; }
+    .success.show { opacity:1; pointer-events:auto; transform:scale(1); }
+    .success .check { font-size:40px; color:var(--primary-2); margin-bottom:8px; }
+    .success p { margin:0; font-weight:800; color:#333 }
+
+    /* small screens */
+    @media (max-width:520px){
+      :root{ --card-w:420px; --gap:14px}
+      .field input{ padding-left:46px }
+      .field label{ left:46px }
+      .underline{ margin-left:46px }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <form method="post" class="card" id="nameForm" novalidate>
+      {% csrf_token %}
+
+      <div class="progress-wrap" aria-hidden="true">
+        <div class="progress"><i style="width:16.66%"></i></div>
+        <div class="step-info">Step <strong>1</strong> / 6</div>
+      </div>
+
+      <div class="logo" aria-hidden="true">
+        <i class="fas fa-dumbbell"></i>
+        <div class="brand">FITNESS</div>
+      </div>
+
+      <h1 class="title"><span class="shimmer">What is your name?</span></h1>
+      <div class="subtitle">Tell us your name to personalize your plans ✨</div>
+
+      <div class="field" style="margin-top:8px;">
+        <i class="fas fa-user icon" aria-hidden="true"></i>
+
+        <!-- placeholder=" " required for :placeholder-shown detection -->
+        <input
+          type="text"
+          name="value"
+          id="nameInput"
+          placeholder=" "
+          autocomplete="name"
+          aria-label="Your full name"
+          required
+          minlength="2"
+        />
+
+        <label for="nameInput">Name</label>
+        <div class="underline" aria-hidden="true"></div>
+
+        <!-- live char hint -->
+        <div class="char-hint" id="charHint">0</div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn" id="nextBtn" disabled aria-disabled="true">Next</button>
+        <div class="note">You can change this later from your profile</div>
+      </div>
+
+      <div class="success" id="successLayer" role="status" aria-live="polite">
+        <div style="text-align:center">
+          <div class="check">✓</div>
+          <p>Saved — moving to next step</p>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    (function(){
+      const nameInput = document.getElementById('nameInput');
+      const nextBtn = document.getElementById('nextBtn');
+      const form = document.getElementById('nameForm');
+      const success = document.getElementById('successLayer');
+      const charHint = document.getElementById('charHint');
+
+      function validName(v){
+        if(!v) return false;
+        v = v.trim();
+        if(v.length < 2) return false;
+        return /[A-Za-z]/.test(v);
+      }
+
+      function updateState(){
+        const ok = validName(nameInput.value);
+        nextBtn.disabled = !ok;
+        nextBtn.setAttribute('aria-disabled', String(!ok));
+        if(ok) nextBtn.classList.add('enabled'); else nextBtn.classList.remove('enabled');
+        charHint.textContent = String(nameInput.value.trim().length || 0);
+      }
+
+      // animate label for autofill: trigger on load after short delay
+      window.addEventListener('load', ()=> setTimeout(updateState, 60));
+
+      nameInput.addEventListener('input', () => {
+        updateState();
+      });
+
+      nameInput.addEventListener('focus', () => { nameInput.style.transition = 'box-shadow .12s'; });
+      nameInput.addEventListener('blur', () => { nameInput.style.transition = ''; });
+
+      form.addEventListener('submit', (e) => {
+        if(!validName(nameInput.value)){
+          e.preventDefault();
+          nameInput.focus();
+          nameInput.style.boxShadow = '0 8px 28px rgba(255,0,0,0.10)';
+          setTimeout(()=> nameInput.style.boxShadow = '', 700);
+          return;
+        }
+
+        // demo success overlay before real submit
+        e.preventDefault();
+        success.classList.add('show');
+
+        setTimeout(()=> {
+          form.submit();
+        }, 650);
+      });
+    })();
+  </script>
+</body>
+</html>

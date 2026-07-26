@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Email Verified - FITNESS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #E6E6FA; /* Lavender background */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Prevent scrollbar during initial pop-up animation */
+        }
+
+        .card {
+            background: #ffffff; /* White background for the card */
+            border-radius: 10px;
+            padding: 40px; /* Slightly more padding for a "confirmation" feel */
+            width: 380px; /* Adjusted width */
+            color: #333; /* Darker text for contrast */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            border: 1px solid #eee; /* Light border */
+            text-align: center; /* Center content */
+
+            /* Pop-up effect */
+            animation: cardPopUp 0.6s ease-out forwards;
+            opacity: 0; /* Start invisible */
+            transform: scale(0.95); /* Start slightly smaller */
+        }
+
+        @keyframes cardPopUp {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        h2 {
+            font-weight: 700;
+            font-size: 2.2em;
+            color: #4A00E0; /* Main title color */
+            margin-bottom: 25px;
+            display: flex; /* For icon alignment */
+            align-items: center;
+            justify-content: center;
+            gap: 10px; /* Space between icon and text */
+        }
+
+        h2 i.fas.fa-check-circle { /* Style for the checkmark icon in H2 */
+            font-size: 0.9em;
+            color: #28a745; /* Green for success */
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .btn-go-to-login { /* Specific class for the button */
+            background-color: #4A00E0; /* Blue button */
+            border: none;
+            padding: 12px 25px; /* Adjusted padding for button */
+            border-radius: 8px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            text-decoration: none; /* Remove underline from anchor */
+            display: inline-block; /* Allows padding and transitions */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-go-to-login:hover {
+            background-color: #6A1B9A;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2><i class="fas fa-check-circle"></i> Email Verification Successful</h2>
+        <p>Your email has been verified. You can now log in.</p>
+        <a href="{% url 'login' %}" class="btn-go-to-login">Go to Login</a>
+    </div>
+</body>
+</html>
